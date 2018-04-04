@@ -24,7 +24,7 @@ EXT =
 endif
 
 .PHONY: default
-default: lib-release zstd-release
+default: lib
 
 .PHONY: all
 all: | allmost examples manual contrib
@@ -105,14 +105,7 @@ cleanTabs:
 .PHONY: clean
 clean:
 	@$(MAKE) -C $(ZSTDDIR) $@ > $(VOID)
-	@$(MAKE) -C $(PRGDIR) $@ > $(VOID)
-	@$(MAKE) -C $(TESTDIR) $@ > $(VOID)
-	@$(MAKE) -C $(ZWRAPDIR) $@ > $(VOID)
 	@$(MAKE) -C examples/ $@ > $(VOID)
-	@$(MAKE) -C contrib/gen_html $@ > $(VOID)
-	@$(MAKE) -C contrib/pzstd $@ > $(VOID)
-	@$(MAKE) -C contrib/seekable_format/examples $@ > $(VOID)
-	@$(MAKE) -C contrib/adaptive-compression $@ > $(VOID)
 	@$(RM) zstd$(EXT) zstdmt$(EXT) tmp*
 	@$(RM) -r lz4
 	@echo Cleaning completed

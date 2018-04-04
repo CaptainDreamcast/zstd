@@ -1,5 +1,12 @@
 <p align="center"><img src="https://raw.githubusercontent.com/facebook/zstd/dev/doc/images/zstd_logo86.png" alt="Zstandard"></p>
 
+### Dreamcast "port"
+Expects a KallistiOS environment ($(KOS_Base), etc.). Moves the library to $(KOS_BASE)/addons/lib/dreamcast/libzstd.a
+
+Generate library with _make_ or _make lib_.
+
+### Normal stuff
+
 __Zstandard__, or `zstd` as short version, is a fast lossless compression algorithm,
 targeting real-time compression scenarios at zlib-level and better compression ratios.
 It's backed by a very fast entropy stage, provided by [Huff0 and FSE library](https://github.com/Cyan4973/FiniteStateEntropy).

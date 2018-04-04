@@ -63,7 +63,7 @@ LIBZSTD = libzstd.$(SHARED_EXT_VER)
 
 .PHONY: default all clean install uninstall
 
-default: lib-release
+default: lib
 
 all: lib
 
@@ -93,7 +93,10 @@ libzstd : $(LIBZSTD)
 libzstd-mt : CPPFLAGS += -DZSTD_MULTITHREAD
 libzstd-mt : libzstd
 
-lib: libzstd.a
+lib: libzstd.a copy_to_kos
+
+copy_to_kos: 
+	mv libzstd.a $(KOS_BASE)/addons/lib/dreamcast/libzstd.a
 
 lib-mt: CPPFLAGS += -DZSTD_MULTITHREAD
 lib-mt: lib
