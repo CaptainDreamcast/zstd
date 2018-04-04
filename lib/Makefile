@@ -25,9 +25,10 @@ DEBUGFLAGS = -Wall -Wextra -Wcast-qual -Wcast-align -Wshadow \
             -Wstrict-prototypes -Wundef -Wpointer-arith -Wformat-security \
             -Wvla -Wformat=2 -Winit-self -Wfloat-equal -Wwrite-strings \
             -Wredundant-decls
-CFLAGS  += $(DEBUGFLAGS) $(MOREFLAGS)
+CFLAGS  += $(CPPFLAGS) $(DEBUGFLAGS) $(MOREFLAGS)
 FLAGS    = $(CPPFLAGS) $(CFLAGS)
 
+include $(KOS_BASE)/Makefile.rules
 
 ZSTD_FILES := $(sort $(wildcard common/*.c compress/*.c decompress/*.c dictBuilder/*.c deprecated/*.c))
 
@@ -69,7 +70,7 @@ all: lib
 libzstd.a: ARFLAGS = rcs
 libzstd.a: $(ZSTD_OBJ)
 	@echo compiling static library
-	@$(AR) $(ARFLAGS) $@ $^
+	@$(KOS_AR) $(ARFLAGS) $@ $^
 
 libzstd.a-mt: CPPFLAGS += -DZSTD_MULTITHREAD
 libzstd.a-mt: libzstd.a
@@ -78,10 +79,10 @@ $(LIBZSTD): LDFLAGS += -shared -fPIC -fvisibility=hidden
 $(LIBZSTD): $(ZSTD_FILES)
 	@echo compiling dynamic library $(LIBVER)
 ifneq (,$(filter Windows%,$(OS)))
-	@$(CC) $(FLAGS) -DZSTD_DLL_EXPORT=1 -shared $^ -o dll\libzstd.dll
+	@$(KOS_CC) $(FLAGS) -DZSTD_DLL_EXPORT=1 -shared $^ -o dll\libzstd.dll
 	dlltool -D dll\libzstd.dll -d dll\libzstd.def -l dll\libzstd.lib
 else
-	@$(CC) $(FLAGS) $^ $(LDFLAGS) $(SONAME_FLAGS) -o $@
+	@$(KOS_CC) $(FLAGS) $^ $(LDFLAGS) $(SONAME_FLAGS) -o $@
 	@echo creating versioned links
 	@ln -sf $@ libzstd.$(SHARED_EXT_MAJOR)
 	@ln -sf $@ libzstd.$(SHARED_EXT)
@@ -92,7 +93,7 @@ libzstd : $(LIBZSTD)
 libzstd-mt : CPPFLAGS += -DZSTD_MULTITHREAD
 libzstd-mt : libzstd
 
-lib: libzstd.a libzstd
+lib: libzstd.a
 
 lib-mt: CPPFLAGS += -DZSTD_MULTITHREAD
 lib-mt: lib
@@ -108,7 +109,7 @@ libzstd-nomt: LDFLAGS += -shared -fPIC -fvisibility=hidden
 libzstd-nomt: $(ZSTD_NOMT_FILES)
 	@echo compiling single-thread dynamic library $(LIBVER)
 	@echo files : $(ZSTD_NOMT_FILES)
-	@$(CC) $(FLAGS) $^ $(LDFLAGS) $(SONAME_FLAGS) -o $@
+	@$(KOS_CC) $(FLAGS) $^ $(LDFLAGS) $(SONAME_FLAGS) -o $@
 
 clean:
 	@$(RM) -r *.dSYM   # Mac OS-X specific
@@ -134,7 +135,7 @@ LIBDIR      ?= $(libdir)
 includedir  ?= $(PREFIX)/include
 INCLUDEDIR  ?= $(includedir)
 
-ifneq (,$(filter $(shell uname),FreeBSD NetBSD DragonFly))
+ifneq (,$(filter $(shell uname),OpenBSD FreeBSD NetBSD DragonFly))
 PKGCONFIGDIR ?= $(PREFIX)/libdata/pkgconfig
 else
 PKGCONFIGDIR ?= $(LIBDIR)/pkgconfig

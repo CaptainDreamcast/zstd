@@ -14,7 +14,7 @@
 
 void ZSTD_fillHashTable(ZSTD_matchState_t* ms,
                         ZSTD_compressionParameters const* cParams,
-                        void const* end, ZSTD_dictTableLoadMethod_e dtlm)
+                        void const* end)
 {
     U32* const hashTable = ms->hashTable;
     U32  const hBits = cParams->hashLog;
@@ -34,9 +34,6 @@ void ZSTD_fillHashTable(ZSTD_matchState_t* ms,
             size_t const hash = ZSTD_hashPtr(ip + i, hBits, mls);
             if (i == 0 || hashTable[hash] == 0)
                 hashTable[hash] = current + i;
-            /* Only load extra positions for ZSTD_dtlm_full */
-            if (dtlm == ZSTD_dtlm_fast)
-                break;
         }
     }
 }

@@ -22,7 +22,7 @@ all: simple_compression simple_decompression \
 	multiple_streaming_compression streaming_memory_usage
 
 $(LIB) :
-	$(MAKE) -C ../lib libzstd.a
+	make -C ../lib libzstd.a
 
 simple_compression : simple_compression.c $(LIB)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $^ $(LDFLAGS) -o $@

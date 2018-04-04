@@ -69,7 +69,6 @@ UNAME=$(uname)
 case "$UNAME" in
   Darwin) MD5SUM="md5 -r" ;;
   FreeBSD) MD5SUM="gmd5sum" ;;
-  OpenBSD) MD5SUM="md5" ;;
   *) MD5SUM="md5sum" ;;
 esac
 
@@ -259,7 +258,7 @@ rm ./*.tmp ./*.zstd
 $ECHO "frame concatenation tests completed"
 
 
-if [ "$isWindows" = false ] && [ "$UNAME" != 'SunOS' ] && [ "$UNAME" != "OpenBSD" ] ; then
+if [ "$isWindows" = false ] && [ "$UNAME" != 'SunOS' ] ; then
 $ECHO "\n**** flush write error test **** "
 
 $ECHO "$ECHO foo | $ZSTD > /dev/full"
@@ -651,25 +650,6 @@ then
 
     $ECHO "\n===>  zstdmt long distance matching round-trip tests "
     roundTripTest -g8M "3 --long=24 -T2"
-
-    $ECHO "\n===>  ovLog tests "
-    ./datagen -g2MB > tmp
-    refSize=$($ZSTD tmp -6 -c --zstd=wlog=18         | wc -c)
-    ov9Size=$($ZSTD tmp -6 -c --zstd=wlog=18,ovlog=9 | wc -c)
-    ov0Size=$($ZSTD tmp -6 -c --zstd=wlog=18,ovlog=0 | wc -c)
-    if [ $refSize -eq $ov9Size ]; then
-        echo ov9Size should be different from refSize
-        exit 1
-    fi
-    if [ $refSize -eq $ov0Size ]; then
-        echo ov0Size should be different from refSize
-        exit 1
-    fi
-    if [ $ov9Size -ge $ov0Size ]; then
-        echo ov9Size=$ov9Size should be smaller than ov0Size=$ov0Size
-        exit 1
-    fi
-
 else
     $ECHO "\n===>  no multithreading, skipping zstdmt tests "
 fi
